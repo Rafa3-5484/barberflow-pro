@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  BARBER
+  CASHIER
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  WITHDRAWAL
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String
+  phone         String?
+  role          UserRole       @default(BARBER)
+  avatar        String?
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  professional  Professional?
+  cashRegisters CashRegister[]
+  notifications Notification[]
+}
+
+model Professional {
+  id            String         @id @default(cuid())
+  name          String
+  photo         String?
+  specialties   String[]
+  phone         String
+  email         String?
+  commission    Float          @default(0)
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  userId        String?        @unique
+  user          User?          @relation(fields: [userId], references: [id])
+
+  appointments  Appointment[]
+  ratings       Rating[]
+}
+
+model Service {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  price         Float
+  duration      Int
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  appointments  Appointment[]
+}
+
+model Client {
+  id            String         @id @default(cuid())
+  name          String
+  phone         String         @unique
+  email         String?
+  birthDate     DateTime?
+  notes         String?
+  totalVisits   Int            @default(0)
+  totalSpent    Float          @default(0)
+  lastVisit     DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  appointments  Appointment[]
+  ratings       Rating[]
+}
+
+model Appointment {
+  id            String            @id @default(cuid())
+  date          DateTime
+  status        AppointmentStatus @default(SCHEDULED)
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  clientId      String
+  client        Client            @relation(fields: [clientId], references: [id])
+
+  professionalId String
+  professional  Professional      @relation(fields: [professionalId], references: [id])
+
+  serviceId     String
+  service       Service           @relation(fields: [serviceId], references: [id])
+
+  cashRegisterId String?
+  cashRegister  CashRegister?     @relation(fields: [cashRegisterId], references: [id])
+}
+
+model Rating {
+  id            String         @id @default(cuid())
+  score         Int
+  comment       String?
+  createdAt     DateTime       @default(now())
+
+  clientId         String
+  client           Client         @relation(fields: [clientId], references: [id])
+
+  professionalId   String
+  professional     Professional   @relation(fields: [professionalId], references: [id])
+}
+
+model CashRegister {
+  id            String         @id @default(cuid())
+  operatorId    String
+  operator      User           @relation(fields: [operatorId], references: [id])
+  initialAmount Float          @default(0)
+  currentAmount Float          @default(0)
+  totalIncome   Float          @default(0)
+  totalExpense  Float          @default(0)
+  status        String         @default("OPEN")
+  openedAt      DateTime       @default(now())
+  closedAt      DateTime?
+
+  transactions  Transaction[]
+  appointments  Appointment[]
+}
+
+model Transaction {
+  id            String          @id @default(cuid())
+  type          TransactionType
+  description   String
+  amount        Float
+  paymentMethod PaymentMethod?
+  createdAt     DateTime        @default(now())
+
+  cashRegisterId String
+  cashRegister   CashRegister   @relation(fields: [cashRegisterId], references: [id])
+}
+
+model StockItem {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  quantity      Int            @default(0)
+  minQuantity   Int            @default(5)
+  price         Float?
+  unit          String         @default("un")
+  expiryDate    DateTime?
+  category      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Notification {
+  id            String         @id @default(cuid())
+  title         String
+  message       String
+  type          String         @default("INFO")
+  read          Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+}
