@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { getUserFromRequest, json, error } from '@/lib/auth'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ date: string }> }) {
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ date
   const endOfDay = new Date(dateStr)
   endOfDay.setHours(23, 59, 59, 999)
 
-  const { data } = await supabase.from('"Appointment"')
+  const { data } = await supabase().from('Appointment')
     .select('*, "Client"(*), "Professional"(*), "Service"(*)')
     .gte('date', startOfDay.toISOString())
     .lte('date', endOfDay.toISOString())

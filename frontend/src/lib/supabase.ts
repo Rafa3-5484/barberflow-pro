@@ -1,6 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://awvbianvsdrzvvbnauyo.supabase.co'
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+let _client: any = null
 
-export const supabase = createClient(supabaseUrl, supabaseServiceKey)
+function ensureClient() {
+  if (!_client) {
+    const url = 'https://awvbianvsdrzvvbnauyo.supabase.co'
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY não configurada')
+    _client = createClient<Database>(url, key)
+  }
+  return _client
+}
+
+export function requireSupabase() {
+  return ensureClient()
+}

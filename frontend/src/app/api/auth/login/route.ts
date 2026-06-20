@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { comparePassword, generateTokens, json, error } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { email, password } = await req.json()
     if (!email || !password) return error('Email e senha obrigatórios')
 
-    const { data: user } = await supabase.from('"User"').select('*').eq('email', email).maybeSingle()
+    const { data: user } = await supabase().from('User').select('*').eq('email', email).maybeSingle()
     if (!user) return error('Credenciais inválidas', 401)
 
     const valid = await comparePassword(password, user.password)

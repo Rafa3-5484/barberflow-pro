@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { getUserFromRequest, json, error } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
@@ -9,10 +9,10 @@ export async function POST(req: NextRequest) {
     const { initialAmount } = await req.json()
     if (initialAmount === undefined) return error('Valor inicial obrigatório')
 
-    const { data: open } = await supabase.from('"CashRegister"').select('id').eq('status', 'OPEN').maybeSingle()
+    const { data: open } = await supabase().from('CashRegister').select('id').eq('status', 'OPEN').maybeSingle()
     if (open) return error('Já existe um caixa aberto', 400)
 
-    const { data, error: dbErr } = await supabase.from('"CashRegister"').insert({
+    const { data, error: dbErr } = await supabase().from('CashRegister').insert({
       operatorId: user.sub, initialAmount, currentAmount: initialAmount,
       openedAt: new Date().toISOString(), status: 'OPEN',
     }).select().single()

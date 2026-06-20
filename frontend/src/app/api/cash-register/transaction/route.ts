@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { getUserFromRequest, json, error } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
@@ -8,11 +8,11 @@ export async function POST(req: NextRequest) {
     const { cashRegisterId, type, description, amount, paymentMethod } = await req.json()
     if (!cashRegisterId || !type || !description || !amount) return error('Dados obrigatórios')
 
-    const { data: register } = await supabase.from('"CashRegister"').select('*').eq('id', cashRegisterId).single()
+    const { data: register } = await supabase().from('CashRegister').select('*').eq('id', cashRegisterId).single()
     if (!register) return error('Caixa não encontrado', 404)
     if (register.status === 'CLOSED') return error('Caixa está fechado', 400)
 
-    const { data: transaction, error: txErr } = await supabase.from('"Transaction"').insert({
+    const { data: transaction, error: txErr } = await supabase().from('Transaction').insert({
       cashRegisterId, type, description, amount, paymentMethod: paymentMethod || null,
     }).select().single()
 
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       update.totalExpense = (register.totalExpense || 0) + amount
     }
 
-    await supabase.from('"CashRegister"').update(update).eq('id', cashRegisterId)
+    await supabase().from('CashRegister').update(update).eq('id', cashRegisterId)
 
     return json(transaction, 201)
   } catch (e) {

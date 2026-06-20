@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { getUserFromRequest, json, error } from '@/lib/auth'
 
 export async function GET(_req: NextRequest) {
   if (!getUserFromRequest(_req)) return error('Não autenticado', 401)
-  const { data } = await supabase.from('"StockItem"').select('*').order('name', { ascending: true })
+  const { data } = await supabase().from('StockItem').select('*').order('name', { ascending: true })
   return json(data || [])
 }
 
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     if (!body.name) return error('Nome obrigatório')
-    const { data, error: dbErr } = await supabase.from('"StockItem"').insert({
+    const { data, error: dbErr } = await supabase().from('StockItem').insert({
       name: body.name, description: body.description || null,
       quantity: body.quantity ?? 0, minQuantity: body.minQuantity ?? 0,
       price: body.price || null, unit: body.unit || 'un',

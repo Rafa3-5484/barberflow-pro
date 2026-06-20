@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { getUserFromRequest, json, error } from '@/lib/auth'
 
 export async function GET(req: NextRequest) {
@@ -15,12 +15,12 @@ export async function GET(req: NextRequest) {
   const endOfDay = new Date(date)
   endOfDay.setHours(23, 59, 59, 999)
 
-  const { data: professionals } = await supabase.from('"Professional"').select('*').eq('active', true)
+  const { data: professionals } = await supabase().from('Professional').select('*').eq('active', true)
   if (!professionals) return json([])
 
   const result = []
   for (const prof of professionals) {
-    const { data: appointments } = await supabase.from('"Appointment"')
+    const { data: appointments } = await supabase().from('Appointment')
       .select('*, "Service"(*)')
       .eq('professionalId', prof.id)
       .gte('date', startOfDay.toISOString())

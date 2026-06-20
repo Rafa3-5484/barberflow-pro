@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireSupabase as supabase } from '@/lib/supabase'
 import { getUserFromRequest, json, error } from '@/lib/auth'
 
 const ADMIN = ['ADMIN']
@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const user = getUserFromRequest(req)
   if (!user || !['ADMIN', 'MANAGER'].includes(user.role)) return error('Não autorizado', 403)
   const { id } = await params
-  const { data } = await supabase.from('"User"').select('id,name,email,phone,role,active,createdAt').eq('id', id).maybeSingle()
+  const { data } = await supabase().from('User').select('id,name,email,phone,role,active,createdAt').eq('id', id).maybeSingle()
   if (!data) return error('Usuário não encontrado', 404)
   return json(data)
 }
@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const { name, email, phone, role, active } = body
     const { id } = await params
     if (email) {
-      const { data: existing } = await supabase.from('"User"').select('id').eq('email', email).neq('id', id).maybeSingle()
+      const { data: existing } = await supabase().from('User').select('id').eq('email', email).neq('id', id).maybeSingle()
       if (existing) return error('Email já em uso', 409)
     }
     const update: Record<string, unknown> = {}
@@ -29,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (phone !== undefined) update.phone = phone
     if (role !== undefined) update.role = role
     if (active !== undefined) update.active = active
-    const { data } = await supabase.from('"User"').update(update).eq('id', id).select('id,name,email,phone,role,active,createdAt').single()
+    const { data } = await supabase().from('User').update(update).eq('id', id).select('id,name,email,phone,role,active,createdAt').single()
     return json(data)
   } catch (e) {
     return error(e instanceof Error ? e.message : 'Erro interno', 500)
@@ -39,8 +39,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!getUserFromRequest(_req)?.role || !ADMIN.includes(getUserFromRequest(_req)!.role)) return error('Não autorizado', 403)
   const { id } = await params
-  const { data } = await supabase.from('"User"').select('id').eq('id', id).maybeSingle()
+  const { data } = await supabase().from('User').select('id').eq('id', id).maybeSingle()
   if (!data) return error('Usuário não encontrado', 404)
-  await supabase.from('"User"').delete().eq('id', id)
+  await supabase().from('User').delete().eq('id', id)
   return json({ message: 'Usuário removido' })
 }
