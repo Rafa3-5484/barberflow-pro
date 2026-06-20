@@ -9,15 +9,16 @@ import {
   TrendingUp,
   Ticket,
   XCircle,
-  ArrowUp,
-  ArrowDown,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/use-auth'
+import { useServices } from '@/hooks/use-services'
+import { useProfessionals } from '@/hooks/use-professionals'
 import { useDashboardKPIs } from '@/hooks/use-dashboard'
 import { useAppointments } from '@/hooks/use-appointments'
+import { OnboardingWizard } from '@/components/dashboard/onboarding-wizard'
 import { formatCurrency } from '@/lib/utils'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 
@@ -45,8 +46,14 @@ const today = format(new Date(), 'yyyy-MM-dd')
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const { data: services } = useServices()
+  const { data: professionals } = useProfessionals()
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs()
   const { data: appointments, isLoading: appointmentsLoading } = useAppointments(today)
+
+  const hasServices = services && services.length > 0
+  const hasProfessionals = professionals && professionals.length > 0
+  const needsOnboarding = !hasServices || !hasProfessionals
 
   const statCards = [
     {
@@ -110,6 +117,11 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {needsOnboarding && (
+        <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 shadow-lg shadow-amber-500/5">
+          <OnboardingWizard />
+        </div>
+      )}
       <div>
         <h2 className="text-lg font-semibold text-zinc-100">
           Bem-vindo, {user?.name || 'Usuário'}
