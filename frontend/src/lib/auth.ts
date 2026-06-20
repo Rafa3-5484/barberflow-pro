@@ -15,7 +15,7 @@ export function comparePassword(password: string, hash: string) {
   return bcrypt.compare(password, hash)
 }
 
-export function generateTokens(payload: { sub: string; email: string; role: string }) {
+export function generateTokens(payload: { sub: string; email: string; role: string; barbershopId: string }) {
   const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' })
   const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '7d' })
   return { accessToken, refreshToken }
@@ -23,7 +23,7 @@ export function generateTokens(payload: { sub: string; email: string; role: stri
 
 export function verifyAccessToken(token: string) {
   try {
-    return jwt.verify(token, JWT_SECRET) as { sub: string; email: string; role: string }
+    return jwt.verify(token, JWT_SECRET) as { sub: string; email: string; role: string; barbershopId: string }
   } catch {
     return null
   }
@@ -31,7 +31,7 @@ export function verifyAccessToken(token: string) {
 
 export function verifyRefreshToken(token: string) {
   try {
-    return jwt.verify(token, JWT_REFRESH_SECRET) as { sub: string; email: string; role: string }
+    return jwt.verify(token, JWT_REFRESH_SECRET) as { sub: string; email: string; role: string; barbershopId: string }
   } catch {
     return null
   }

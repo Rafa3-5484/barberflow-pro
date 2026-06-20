@@ -10,10 +10,10 @@ export async function POST(req: NextRequest) {
     const payload = verifyRefreshToken(refreshToken)
     if (!payload) return error('Token inválido', 401)
 
-    const { data: user } = await supabase().from('User').select('id,name,email,phone,role').eq('id', payload.sub).maybeSingle()
+    const { data: user } = await supabase().from('User').select('id,name,email,phone,role,barbershopId').eq('id', payload.sub).maybeSingle()
     if (!user) return error('Usuário não encontrado', 401)
 
-    const tokens = generateTokens({ sub: user.id, email: user.email, role: user.role })
+    const tokens = generateTokens({ sub: user.id, email: user.email, role: user.role, barbershopId: user.barbershopId })
     return json({ ...tokens, user })
   } catch (e) {
     return error(e instanceof Error ? e.message : 'Erro interno', 500)

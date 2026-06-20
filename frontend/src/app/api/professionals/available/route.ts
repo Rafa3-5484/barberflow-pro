@@ -5,6 +5,7 @@ import { getUserFromRequest, json, error } from '@/lib/auth'
 export async function GET(req: NextRequest) {
   const user = getUserFromRequest(req)
   if (!user) return error('Não autenticado', 401)
+  const barbershopId = user.barbershopId
 
   const { searchParams } = new URL(req.url)
   const date = searchParams.get('date')
@@ -15,13 +16,14 @@ export async function GET(req: NextRequest) {
   const endOfDay = new Date(date)
   endOfDay.setHours(23, 59, 59, 999)
 
-  const { data: professionals } = await supabase().from('Professional').select('*').eq('active', true)
+  const { data: professionals } = await supabase().from('Professional').select('*').eq('barbershopId', barbershopId).eq('active', true)
   if (!professionals) return json([])
 
   const result = []
   for (const prof of professionals) {
     const { data: appointments } = await supabase().from('Appointment')
       .select('*, "Service"(*)')
+      .eq('barbershopId', barbershopId)
       .eq('professionalId', prof.id)
       .gte('date', startOfDay.toISOString())
       .lte('date', endOfDay.toISOString())

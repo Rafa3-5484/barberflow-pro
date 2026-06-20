@@ -29,6 +29,7 @@ export function useCreateAppointment() {
       clientId?: string
       professionalId: string
       serviceId: string
+      barbershopId?: string
       date: string
       notes?: string
     }) => api.post<Appointment>('/appointments', data),

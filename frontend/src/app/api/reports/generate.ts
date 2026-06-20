@@ -1,10 +1,11 @@
 import { requireSupabase as supabase } from '@/lib/supabase'
 
-export async function generateReport(startDate: Date, endDate: Date) {
+export async function generateReport(startDate: Date, endDate: Date, barbershopId: string) {
   const { data: appointments } = await supabase().from('Appointment')
     .select('*, "Client"(*), "Professional"(*), "Service"(*)')
     .gte('date', startDate.toISOString())
     .lte('date', endDate.toISOString())
+    .eq('barbershopId', barbershopId)
     .order('date', { ascending: true })
 
   const all: any[] = appointments || []

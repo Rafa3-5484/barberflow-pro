@@ -12,14 +12,16 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!getUserFromRequest(req)) return error('Não autenticado', 401)
+  const user = getUserFromRequest(req)
+  if (!user) return error('Não autenticado', 401)
+  const barbershopId = user.barbershopId
   try {
     const { status } = await req.json()
     if (!status) return error('Status obrigatório')
     const { id } = await params
 
     const { data: appointment } = await supabase().from('Appointment')
-      .select('*, "Service"(*)').eq('id', id).maybeSingle()
+      .select('*, "Service"(*)').eq('barbershopId', barbershopId).eq('id', id).maybeSingle()
     if (!appointment) return error('Agendamento não encontrado', 404)
 
     const allowed = VALID_TRANSITIONS[appointment.status]
@@ -27,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       return error(`Transição inválida de ${appointment.status} para ${status}`, 400)
     }
 
-    const { data: updated } = await supabase().from('Appointment').update({ status }).eq('id', id)
+    const { data: updated } = await supabase().from('Appointment').update({ status }).eq('barbershopId', barbershopId).eq('id', id)
       .select('*, "Client"(*), "Professional"(*), "Service"(*)').single()
 
     if (status === 'COMPLETED') {
@@ -35,7 +37,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         totalVisits: (appointment.client_totalVisits || 0) + 1,
         totalSpent: (appointment.client_totalSpent || 0) + (appointment.service_price || 0),
         lastVisit: new Date().toISOString(),
-      }).eq('id', appointment.clientId)
+      }).eq('barbershopId', barbershopId).eq('id', appointment.clientId)
     }
 
     return json(updated)

@@ -868,6 +868,7 @@ export function BookingFlow() {
         clientEmail: clientEmail.trim() || undefined,
         professionalId: selectedProfessional!,
         serviceId: selectedService!,
+        barbershopId: '00000000-0000-0000-0000-000000000001',
         date: selectedDate
           ? `${format(selectedDate, 'yyyy-MM-dd')}T${selectedTime}:00`
           : '',
