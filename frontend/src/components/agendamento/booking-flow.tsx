@@ -794,7 +794,7 @@ const slideVariants = {
   exit: (direction: number) => ({ opacity: 0, x: direction > 0 ? -60 : 60 }),
 }
 
-export function BookingFlow() {
+export function BookingFlow({ barbershopId }: { barbershopId?: string }) {
   const [step, setStep] = useState(1)
   const [direction, setDirection] = useState(0)
   const [selectedService, setSelectedService] = useState<string | null>(null)
@@ -868,7 +868,7 @@ export function BookingFlow() {
         clientEmail: clientEmail.trim() || undefined,
         professionalId: selectedProfessional!,
         serviceId: selectedService!,
-        barbershopId: '00000000-0000-0000-0000-000000000001',
+        barbershopId: barbershopId || '00000000-0000-0000-0000-000000000001',
         date: selectedDate
           ? `${format(selectedDate, 'yyyy-MM-dd')}T${selectedTime}:00`
           : '',
@@ -877,7 +877,7 @@ export function BookingFlow() {
     } catch (err: any) {
       setSubmitError(err?.message || 'Erro ao confirmar agendamento. Tente novamente.')
     }
-  }, [createAppointment, clientName, clientPhone, clientEmail, selectedProfessional, selectedService, selectedDate, selectedTime])
+  }, [createAppointment, clientName, clientPhone, clientEmail, selectedProfessional, selectedService, selectedDate, selectedTime, barbershopId])
 
   if (success) {
     return (

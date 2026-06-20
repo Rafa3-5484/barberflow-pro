@@ -59,6 +59,7 @@ import {
 import { useAppointments, useUpdateAppointmentStatus } from '@/hooks/use-appointments'
 import { useProfessionals } from '@/hooks/use-professionals'
 import { BookingFlow } from '@/components/agendamento/booking-flow'
+import { useAuth } from '@/hooks/use-auth'
 import type { Appointment, AppointmentStatus } from '@/types'
 
 type ViewMode = 'day' | 'week' | 'month'
@@ -107,6 +108,7 @@ export default function AgendaPage() {
   const [professionalFilter, setProfessionalFilter] = useState<string | null>('all')
   const [showNewBooking, setShowNewBooking] = useState(false)
 
+  const { user } = useAuth()
   const updateStatus = useUpdateAppointmentStatus()
   const { data: professionals } = useProfessionals()
 
@@ -601,7 +603,7 @@ export default function AgendaPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[65vh] overflow-y-auto">
-            <BookingFlow />
+            <BookingFlow barbershopId={user?.barbershopId} />
           </div>
         </DialogContent>
       </Dialog>

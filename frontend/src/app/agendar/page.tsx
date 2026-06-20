@@ -1,16 +1,34 @@
-import type { Metadata } from 'next'
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { BookingFlow } from '@/components/agendamento/booking-flow'
+import { useAuth } from '@/hooks/use-auth'
 import { Scissors, Sparkles } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: 'Agende seu Horário | BarberFlow Pro',
-  description:
-    'Agende seu horário na BarberFlow Pro. Escolha o serviço, profissional e horário ideal para você.',
-}
-
 export default function AgendarPage() {
+  const { user, isLoading, isAuthenticated } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace('/dashboard/agenda')
+    }
+  }, [isLoading, isAuthenticated, router])
+
+  if (isLoading || isAuthenticated) {
+    return (
+      <>
+        <Navbar />
+        <main className="flex-1 bg-zinc-950">
+          <div className="relative overflow-hidden pt-28 pb-20" />
+        </main>
+        <Footer />
+      </>
+    )
+  }
   return (
     <>
       <Navbar />

@@ -11,6 +11,7 @@ export interface User {
   role: UserRole
   avatar?: string
   active: boolean
+  barbershopId: string
   createdAt: string
 }
 
@@ -104,6 +105,18 @@ export interface Notification {
   message: string
   type: string
   read: boolean
+  createdAt: string
+}
+
+export interface Barbershop {
+  id: string
+  name: string
+  slug: string
+  phone?: string
+  email?: string
+  address?: string
+  logo?: string
+  active: boolean
   createdAt: string
 }
 

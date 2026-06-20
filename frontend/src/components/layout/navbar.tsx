@@ -10,10 +10,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/s
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { href: '/#hero', label: 'Início' },
-  { href: '/#services', label: 'Serviços' },
-  { href: '/#professionals', label: 'Profissionais' },
-  { href: '/#about', label: 'Sobre' },
+  { href: '/#features', label: 'Recursos' },
+  { href: '/#pricing', label: 'Preços' },
   { href: '/#contact', label: 'Contato' },
 ]
 
@@ -72,16 +70,15 @@ export function Navbar() {
             <span className="sr-only">Alternar tema</span>
           </Button>
 
-          <a href="/agendar">
+          <a href="/cadastrar">
             <Button className="hidden md:inline-flex gap-2 bg-amber-500 text-black hover:bg-amber-400">
-              <Calendar className="h-4 w-4" />
-              Agende Agora
+              Começar Agora
             </Button>
           </a>
 
           <a href="/login">
             <Button variant="outline" className="hidden border-zinc-700 text-zinc-300 hover:text-white md:inline-flex">
-              Área do Cliente
+              Login
             </Button>
           </a>
 
@@ -114,15 +111,14 @@ export function Navbar() {
                   ))}
                 </nav>
                 <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-zinc-800">
-                  <a href="/agendar">
+                  <a href="/cadastrar">
                     <Button className="w-full gap-2 bg-amber-500 text-black hover:bg-amber-400">
-                      <Calendar className="h-4 w-4" />
-                      Agende Agora
+                      Começar Agora
                     </Button>
                   </a>
                   <a href="/login">
                     <Button variant="outline" className="w-full border-zinc-700 text-zinc-300">
-                      Área do Cliente
+                      Login
                     </Button>
                   </a>
                 </div>

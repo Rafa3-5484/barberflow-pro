@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calendar, ArrowDown, Scissors } from 'lucide-react'
+import { ArrowDown, Scissors } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function Hero() {
@@ -25,55 +25,53 @@ export function Hero() {
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-sm text-amber-400">
             <Scissors className="h-3.5 w-3.5" />
-            Sistema de Gestão Profissional
+            Plataforma de Gestão para Barbearias
           </div>
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-6 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
-        >
-          O Futuro da Sua{' '}
-          <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
-            Barbearia
-          </span>{' '}
-          Começa Aqui
-        </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-6 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
+          >
+            O Sistema que Sua{' '}
+            <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+              Barbearia
+            </span>{' '}
+            Merece
+          </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-400"
-        >
-          BarberFlow Pro é o sistema completo para gerenciar sua barbearia com
-          eficiência. Agende horários, gerencie profissionais, controle o caixa e
-          impulsione seus resultados.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-400"
+          >
+            Crie uma página personalizada para sua barbearia, receba agendamentos online,
+            gerencie sua equipe, controle o caixa e acompanhe relatórios — tudo em um só lugar.
+          </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-col items-center justify-center gap-4 sm:flex-row"
-        >
-          <a href="/agendar">
-            <Button className="h-12 gap-2 bg-amber-500 px-8 text-base text-black hover:bg-amber-400">
-              <Calendar className="h-5 w-5" />
-              Agende Agora
-            </Button>
-          </a>
-          <a href="#services">
-            <Button
-              variant="outline"
-              className="h-12 border-zinc-700 px-8 text-base text-zinc-300 hover:text-white"
-            >
-              Conhecer Serviços
-            </Button>
-          </a>
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
+          >
+            <a href="/cadastrar">
+              <Button className="h-12 gap-2 bg-amber-500 px-8 text-base text-black hover:bg-amber-400">
+                Criar Conta Grátis
+              </Button>
+            </a>
+            <a href="#features">
+              <Button
+                variant="outline"
+                className="h-12 border-zinc-700 px-8 text-base text-zinc-300 hover:text-white"
+              >
+                Ver Recursos
+              </Button>
+            </a>
+          </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -82,7 +80,7 @@ export function Hero() {
           className="mt-16"
         >
           <a
-            href="#services"
+            href="#features"
             className="inline-flex animate-bounce text-zinc-500 transition-colors hover:text-amber-400"
           >
             <ArrowDown className="h-6 w-6" />

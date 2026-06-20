@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   Settings,
@@ -13,12 +14,11 @@ import {
   Save,
   Plus,
   Trash2,
-  ToggleLeft,
-  ToggleRight,
   Sun,
   Moon,
   Monitor,
   Check,
+  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -27,6 +27,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
+import { api } from '@/lib/api'
+import type { Barbershop } from '@/types'
 import {
   Dialog,
   DialogContent,
@@ -155,6 +157,44 @@ export default function ConfiguracoesPage() {
 }
 
 function GeneralSettings() {
+  const queryClient = useQueryClient()
+
+  const { data: barbershop, isLoading } = useQuery<Barbershop>({
+    queryKey: ['barbershop'],
+    queryFn: () => api.get('/barbershop'),
+  })
+
+  const [name, setName] = useState('')
+  const [slug, setSlug] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [address, setAddress] = useState('')
+
+  useEffect(() => {
+    if (barbershop) {
+      setName(barbershop.name || '')
+      setSlug(barbershop.slug || '')
+      setPhone(barbershop.phone || '')
+      setEmail(barbershop.email || '')
+      setAddress(barbershop.address || '')
+    }
+  }, [barbershop])
+
+  const saveMutation = useMutation({
+    mutationFn: (data: Partial<Barbershop>) => api.patch('/barbershop', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['barbershop'] })
+    },
+  })
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+      </div>
+    )
+  }
+
   return (
     <Card className="border-zinc-800 bg-zinc-900">
       <CardHeader>
@@ -165,74 +205,79 @@ function GeneralSettings() {
           <div>
             <Label className="text-xs text-zinc-400">Nome da Barbearia</Label>
             <Input
-              defaultValue="BarberFlow Pro"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300"
             />
           </div>
           <div>
+            <Label className="text-xs text-zinc-400">Slug (URL pública)</Label>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="text-xs text-zinc-600 shrink-0">/b/</span>
+              <Input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                className="border-zinc-800 bg-zinc-950 text-zinc-300 font-mono"
+              />
+            </div>
+            <p className="mt-1 text-xs text-zinc-600">Link público: barberflowpro.com.br/b/{slug}</p>
+          </div>
+          <div>
             <Label className="text-xs text-zinc-400">Telefone</Label>
             <Input
-              defaultValue="(11) 99999-8888"
-              className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label className="text-xs text-zinc-400">Endereço</Label>
-            <Input
-              defaultValue="Rua Augusta, 1500 - Consolação, São Paulo - SP"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300"
             />
           </div>
           <div>
             <Label className="text-xs text-zinc-400">Email</Label>
             <Input
-              defaultValue="contato@barberflow.com"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300"
             />
           </div>
-          <div>
-            <Label className="text-xs text-zinc-400">WhatsApp</Label>
+          <div className="sm:col-span-2">
+            <Label className="text-xs text-zinc-400">Endereço</Label>
             <Input
-              defaultValue="5511999998888"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300"
             />
-          </div>
-          <div className="sm:col-span-2">
-            <Label className="text-xs text-zinc-400">Horário de Funcionamento</Label>
-            <div className="mt-1 grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-xs text-zinc-500">Abertura</Label>
-                <Input type="time" defaultValue="08:00" className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300" />
-              </div>
-              <div>
-                <Label className="text-xs text-zinc-500">Fechamento</Label>
-                <Input type="time" defaultValue="20:00" className="mt-1 border-zinc-800 bg-zinc-950 text-zinc-300" />
-              </div>
-            </div>
-          </div>
-          <div className="sm:col-span-2">
-            <Label className="text-xs text-zinc-400">Dias de Funcionamento</Label>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map((day) => (
-                <Badge
-                  key={day}
-                  variant={day !== 'Dom' ? 'default' : 'outline'}
-                  className={cn(
-                    'cursor-pointer',
-                    day !== 'Dom' ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20' : 'text-zinc-500 border-zinc-700'
-                  )}
-                >
-                  {day}
-                </Badge>
-              ))}
-            </div>
           </div>
         </div>
-        <Button className="mt-6 gap-1.5 bg-amber-500 text-black hover:bg-amber-400">
-          <Save className="h-4 w-4" />
+        <Button
+          className="mt-6 gap-1.5 bg-amber-500 text-black hover:bg-amber-400"
+          onClick={() => saveMutation.mutate({ name, slug, phone, email, address })}
+          disabled={saveMutation.isPending}
+        >
+          {saveMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
           Salvar Alterações
         </Button>
+        {saveMutation.isSuccess && (
+          <p className="mt-2 text-xs text-emerald-400">Salvo com sucesso!</p>
+        )}
+        {saveMutation.isError && (
+          <p className="mt-2 text-xs text-red-400">Erro ao salvar. Tente novamente.</p>
+        )}
+        {barbershop && (
+          <div className="mt-6 rounded-lg border border-amber-500/10 bg-amber-500/5 p-4">
+            <p className="text-xs font-medium text-amber-400 mb-1">🌐 Página pública</p>
+            <a
+              href={`/b/${barbershop.slug}`}
+              target="_blank"
+              className="text-sm text-amber-300 underline underline-offset-2 hover:text-amber-200 transition-colors"
+            >
+              barberflowpro.com.br/b/{barbershop.slug}
+            </a>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
