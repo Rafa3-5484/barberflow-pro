@@ -68,7 +68,9 @@ export default function LoginPage() {
         <div className="card-switch">
           <div className="switch-header">
             <span className={`switch-label ${!isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(false)}>Entrar</span>
-            <span className={`slider ${isSignUp ? 'checked' : ''}`} onClick={() => setIsSignUp(!isSignUp)}></span>
+            <span className="switch-knob-wrapper" onClick={() => setIsSignUp(!isSignUp)}>
+              <span className={`switch-knob ${isSignUp ? 'right' : 'left'}`} />
+            </span>
             <span className={`switch-label ${isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(true)}>Cadastrar</span>
           </div>
 
@@ -130,55 +132,60 @@ export default function LoginPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 36px;
+          gap: 28px;
           perspective: 1000px;
         }
         .switch-header {
           display: flex;
           align-items: center;
-          gap: 14px;
+          gap: 0;
           user-select: none;
+          background: #18181b;
+          border: 2px solid #27272a;
+          border-radius: 10px;
+          padding: 4px;
+          box-shadow: 4px 4px 0 #09090b;
+          cursor: pointer;
+          position: relative;
         }
         .switch-label {
-          font-size: 14px;
-          font-weight: 600;
-          color: #a1a1aa;
+          font-size: 13px;
+          font-weight: 700;
+          color: #52525b;
           cursor: pointer;
           transition: color 0.3s;
+          padding: 8px 18px;
+          border-radius: 7px;
+          position: relative;
+          z-index: 1;
         }
         .switch-label.active {
-          color: #f59e0b;
-          text-decoration: underline;
+          color: #09090b;
         }
-        .slider {
-          box-sizing: border-box;
-          width: 44px;
-          height: 20px;
-          border-radius: 5px;
-          border: 2px solid #27272a;
-          box-shadow: 3px 3px 0 #27272a;
-          background-color: #18181b;
+        .switch-knob-wrapper {
           position: relative;
-          transition: 0.3s;
+          width: 4px;
+          height: 28px;
+          display: flex;
+          align-items: center;
           flex-shrink: 0;
-          cursor: pointer;
         }
-        .slider::before {
-          box-sizing: border-box;
+        .switch-knob {
           position: absolute;
-          content: '';
-          height: 18px;
-          width: 18px;
-          border: 2px solid #27272a;
-          border-radius: 3px;
-          left: -1px;
-          bottom: 1px;
-          background-color: #f59e0b;
-          box-shadow: 0 2px 0 #27272a;
-          transition: 0.3s;
+          width: 28px;
+          height: 28px;
+          border-radius: 7px;
+          background: #f59e0b;
+          box-shadow: 0 2px 0 #a16207;
+          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+          top: 50%;
+          margin-top: -14px;
         }
-        .slider.checked::before {
-          transform: translateX(24px);
+        .switch-knob.left {
+          transform: translateX(-18px);
+        }
+        .switch-knob.right {
+          transform: translateX(18px);
         }
         .flip-card__inner {
           width: 320px;
