@@ -1,0 +1,26 @@
+app = "barberflow-pro"
+
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+processes = []
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  BACKEND_PORT = "4001"
+  FRONTEND_PORT = "3001"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
