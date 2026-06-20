@@ -192,6 +192,8 @@ export default function LoginPage() {
           flex-direction: column;
           align-items: center;
           gap: 14px;
+          flex: 1;
+          justify-content: center;
         }
         .title {
           font-size: 22px;
