@@ -67,11 +67,8 @@ export default function LoginPage() {
 
         <div className="card-switch">
           <div className="switch-header">
-            <span className={`switch-label ${!isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(false)}>Entrar</span>
-            <span className="switch-knob-wrapper" onClick={() => setIsSignUp(!isSignUp)}>
-              <span className={`switch-knob ${isSignUp ? 'right' : 'left'}`} />
-            </span>
-            <span className={`switch-label ${isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(true)}>Cadastrar</span>
+            <button type="button" className={`switch-label ${!isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(false)}>Entrar</button>
+            <button type="button" className={`switch-label ${isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(true)}>Cadastrar</button>
           </div>
 
           <div className={`flip-card__inner ${isSignUp ? 'flipped' : ''}`}>
@@ -138,54 +135,30 @@ export default function LoginPage() {
         .switch-header {
           display: flex;
           align-items: center;
-          gap: 0;
+          gap: 4px;
           user-select: none;
           background: #18181b;
           border: 2px solid #27272a;
           border-radius: 10px;
           padding: 4px;
           box-shadow: 4px 4px 0 #09090b;
-          cursor: pointer;
-          position: relative;
         }
         .switch-label {
+          all: unset;
           font-size: 13px;
           font-weight: 700;
           color: #52525b;
           cursor: pointer;
-          transition: color 0.3s;
-          padding: 8px 18px;
+          transition: all 0.3s;
+          padding: 8px 22px;
           border-radius: 7px;
-          position: relative;
-          z-index: 1;
+          text-align: center;
+          flex: 1;
         }
         .switch-label.active {
           color: #09090b;
-        }
-        .switch-knob-wrapper {
-          position: relative;
-          width: 4px;
-          height: 28px;
-          display: flex;
-          align-items: center;
-          flex-shrink: 0;
-        }
-        .switch-knob {
-          position: absolute;
-          width: 28px;
-          height: 28px;
-          border-radius: 7px;
           background: #f59e0b;
           box-shadow: 0 2px 0 #a16207;
-          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-          top: 50%;
-          margin-top: -14px;
-        }
-        .switch-knob.left {
-          transform: translateX(-18px);
-        }
-        .switch-knob.right {
-          transform: translateX(18px);
         }
         .flip-card__inner {
           width: 320px;
