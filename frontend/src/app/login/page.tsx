@@ -172,7 +172,7 @@ export default function LoginPage() {
         }
         .flip-card__front,
         .flip-card__back {
-          padding: 32px 28px 28px;
+          padding: 36px 28px 28px;
           position: absolute;
           inset: 0;
           display: flex;
