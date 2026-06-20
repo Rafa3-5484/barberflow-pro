@@ -31,9 +31,10 @@ export async function POST(req: NextRequest) {
 
     if (bsError) return error(bsError.message, 500)
 
+    const now = new Date().toISOString()
     const { data: user, error: uError } = await supabase().from('User').insert({
       id: userId, name, email, password: hashed, phone: phone || null,
-      role: 'ADMIN', barbershopId, active: true,
+      role: 'ADMIN', barbershopId, active: true, updatedAt: now, createdAt: now,
     }).select('id,name,email,phone,role,barbershopId').single()
 
     if (uError) {

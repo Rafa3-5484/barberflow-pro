@@ -12,9 +12,11 @@ export async function POST(req: NextRequest) {
     if (existing) return error('Email já cadastrado', 409)
 
     const hashed = await hashPassword(password)
+    const now = new Date().toISOString()
     const { data: user, error: dbError } = await supabase().from('User').insert({
       name, email, password: hashed, phone: phone || null, role: role || 'BARBER',
       barbershopId: payload?.barbershopId || '00000000-0000-0000-0000-000000000001',
+      updatedAt: now, createdAt: now,
     }).select('id,name,email,phone,role,barbershopId').single()
 
     if (dbError) return error(dbError.message, 500)
