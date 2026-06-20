@@ -66,13 +66,13 @@ export default function LoginPage() {
         </div>
 
         <div className="card-switch">
-          <label className="switch">
-            <input type="checkbox" className="toggle" checked={isSignUp} onChange={() => setIsSignUp(!isSignUp)} />
-            <span className="slider"></span>
-            <span className="card-side"></span>
-          </label>
+          <div className="switch-header">
+            <span className={`switch-label ${!isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(false)}>Entrar</span>
+            <span className={`slider ${isSignUp ? 'checked' : ''}`} onClick={() => setIsSignUp(!isSignUp)}></span>
+            <span className={`switch-label ${isSignUp ? 'active' : ''}`} onClick={() => setIsSignUp(true)}>Cadastrar</span>
+          </div>
 
-          <div className="flip-card__inner">
+          <div className={`flip-card__inner ${isSignUp ? 'flipped' : ''}`}>
             <div className="flip-card__front">
               <div className="title">Entrar</div>
               <form className="flip-card__form" onSubmit={handleLogin}>
@@ -117,12 +117,12 @@ export default function LoginPage() {
               </form>
             </div>
           </div>
-        </div>
+          </div>
 
-        <p className="text-xs text-zinc-600">
-          Já tem barbearia?{' '}
-          <a href="/cadastrar" className="text-amber-400 hover:text-amber-300 transition-colors">Criar conta para barbearia</a>
-        </p>
+          <p className="text-xs text-zinc-600">
+            Já tem barbearia?{' '}
+            <a href="/cadastrar" className="text-amber-400 hover:text-amber-300 transition-colors">Criar conta para barbearia</a>
+          </p>
       </div>
 
       <style>{`
@@ -130,37 +130,39 @@ export default function LoginPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 40px;
+          gap: 36px;
           perspective: 1000px;
         }
-
-        .switch {
-          position: relative;
-          display: inline-flex;
+        .switch-header {
+          display: flex;
           align-items: center;
-          width: 50px;
-          height: 20px;
+          gap: 14px;
+          user-select: none;
+        }
+        .switch-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #a1a1aa;
           cursor: pointer;
+          transition: color 0.3s;
         }
-
-        .toggle {
-          opacity: 0;
-          width: 0;
-          height: 0;
+        .switch-label.active {
+          color: #f59e0b;
+          text-decoration: underline;
         }
-
         .slider {
           box-sizing: border-box;
+          width: 44px;
+          height: 20px;
           border-radius: 5px;
           border: 2px solid #27272a;
           box-shadow: 3px 3px 0 #27272a;
-          position: absolute;
-          cursor: pointer;
-          inset: 0;
           background-color: #18181b;
+          position: relative;
           transition: 0.3s;
+          flex-shrink: 0;
+          cursor: pointer;
         }
-
         .slider::before {
           box-sizing: border-box;
           position: absolute;
@@ -175,57 +177,19 @@ export default function LoginPage() {
           box-shadow: 0 2px 0 #27272a;
           transition: 0.3s;
         }
-
-        .toggle:checked + .slider::before {
-          transform: translateX(28px);
+        .slider.checked::before {
+          transform: translateX(24px);
         }
-
-        .card-side::before {
-          position: absolute;
-          content: 'Entrar';
-          left: -70px;
-          top: 0;
-          width: 80px;
-          text-align: right;
-          color: #f59e0b;
-          font-weight: 600;
-          font-size: 14px;
-          text-decoration: underline;
-        }
-
-        .card-side::after {
-          position: absolute;
-          content: 'Cadastrar';
-          left: 60px;
-          top: 0;
-          width: 80px;
-          color: #a1a1aa;
-          font-weight: 600;
-          font-size: 14px;
-        }
-
-        .toggle:checked ~ .card-side::before {
-          color: #a1a1aa;
-          text-decoration: none;
-        }
-
-        .toggle:checked ~ .card-side::after {
-          color: #f59e0b;
-          text-decoration: underline;
-        }
-
         .flip-card__inner {
           width: 320px;
           height: 380px;
           position: relative;
-          transition: transform 0.8s;
+          transition: transform 0.6s ease;
           transform-style: preserve-3d;
         }
-
-        .toggle:checked ~ .flip-card__inner {
+        .flip-card__inner.flipped {
           transform: rotateY(180deg);
         }
-
         .flip-card__front,
         .flip-card__back {
           padding: 28px;
@@ -241,18 +205,15 @@ export default function LoginPage() {
           border: 2px solid #27272a;
           box-shadow: 8px 8px 0 #18181b;
         }
-
         .flip-card__back {
           transform: rotateY(180deg);
         }
-
         .flip-card__form {
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 14px;
         }
-
         .title {
           font-size: 22px;
           font-weight: 800;
@@ -260,12 +221,10 @@ export default function LoginPage() {
           color: #f4f4f5;
           margin-bottom: 4px;
         }
-
         .input-wrapper {
           position: relative;
           width: 100%;
         }
-
         .input-icon {
           position: absolute;
           left: 12px;
@@ -276,7 +235,6 @@ export default function LoginPage() {
           color: #52525b;
           pointer-events: none;
         }
-
         .input-field {
           width: 100%;
           height: 42px;
@@ -291,15 +249,12 @@ export default function LoginPage() {
           box-sizing: border-box;
           transition: border-color 0.2s;
         }
-
         .input-field::placeholder {
           color: #52525b;
         }
-
         .input-field:focus {
           border-color: #f59e0b;
         }
-
         .btn {
           width: 140px;
           height: 40px;
@@ -313,24 +268,20 @@ export default function LoginPage() {
           cursor: pointer;
           transition: all 0.1s;
         }
-
         .btn:active {
           box-shadow: 0 0 0 #78350f;
           transform: translate(3px, 3px);
         }
-
         .btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-
         .link {
           font-size: 12px;
           color: #52525b;
           text-decoration: none;
           transition: color 0.2s;
         }
-
         .link:hover {
           color: #f59e0b;
         }
