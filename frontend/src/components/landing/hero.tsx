@@ -42,6 +42,15 @@ export function Hero() {
             Merece
           </motion.h1>
 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mb-8 flex justify-center"
+          >
+            <img src="/logo.png" alt="BarberFlow Pro" className="h-24 w-24 object-contain sm:h-28 sm:w-28" />
+          </motion.div>
+
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
