@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Scissors, Mail, Lock, User, Phone } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { useAuth } from '@/hooks/use-auth'
+
+function formatPhone(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 11)
+  if (digits.length <= 2) return `(${digits}`
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
+}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -23,6 +25,8 @@ export default function LoginPage() {
   const [regPhone, setRegPhone] = useState('')
   const [regPassword, setRegPassword] = useState('')
   const [regError, setRegError] = useState('')
+
+  const [isSignUp, setIsSignUp] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,12 +44,7 @@ export default function LoginPage() {
     e.preventDefault()
     setRegError('')
     try {
-      await register({
-        name: regName,
-        email: regEmail,
-        phone: regPhone,
-        password: regPassword,
-      })
+      await register({ name: regName, email: regEmail, phone: regPhone, password: regPassword })
       router.push('/dashboard')
     } catch (err: unknown) {
       const error = err as { message?: string }
@@ -54,178 +53,327 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950 p-4">
-      <div className="absolute inset-0 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950 p-4 overflow-hidden">
+      <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-amber-600/5 blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md">
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center gap-2">
-            <Scissors className="h-8 w-8 text-amber-400" />
-            <span className="text-2xl font-bold tracking-tight text-white">
-              BarberFlow Pro
-            </span>
-          </div>
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        <div className="flex items-center gap-2">
+          <Scissors className="h-7 w-7 text-amber-400" />
+          <span className="text-xl font-bold tracking-tight text-white">BarberFlow Pro</span>
         </div>
 
-        <Card className="border-zinc-800 bg-zinc-950 shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-center text-white">Bem-vindo</CardTitle>
-            <CardDescription className="text-center text-zinc-400">
-              Faça login ou crie sua conta
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login">
-              <TabsList className="mb-6 w-full bg-zinc-900">
-                <TabsTrigger value="login" className="flex-1">
-                  Entrar
-                </TabsTrigger>
-                <TabsTrigger value="register" className="flex-1">
-                  Cadastrar
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="login-email" className="text-zinc-300">
-                      Email
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                      <Input
-                        id="login-email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
-                        className="border-zinc-800 bg-zinc-900 pl-9 text-zinc-300 placeholder:text-zinc-600"
-                        required
-                      />
-                    </div>
+        <div className="card-switch">
+          <label className="switch">
+            <input type="checkbox" className="toggle" checked={isSignUp} onChange={() => setIsSignUp(!isSignUp)} />
+            <span className="slider"></span>
+            <span className="card-side"></span>
+            <div className="flip-card__inner">
+              <div className="flip-card__front">
+                <div className="title">Entrar</div>
+                <form className="flip-card__form" onSubmit={handleLogin}>
+                  <div className="input-wrapper">
+                    <Mail className="input-icon" />
+                    <input
+                      className="flip-card__input"
+                      type="email"
+                      placeholder="Email"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      required
+                    />
                   </div>
-                  <div>
-                    <Label htmlFor="login-password" className="text-zinc-300">
-                      Senha
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                      <Input
-                        id="login-password"
-                        type="password"
-                        placeholder="Sua senha"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        className="border-zinc-800 bg-zinc-900 pl-9 text-zinc-300 placeholder:text-zinc-600"
-                        required
-                      />
-                    </div>
+                  <div className="input-wrapper">
+                    <Lock className="input-icon" />
+                    <input
+                      className="flip-card__input"
+                      type="password"
+                      placeholder="Senha"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      required
+                    />
                   </div>
-                  {loginError && (
-                    <p className="text-sm text-red-400">{loginError}</p>
-                  )}
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-amber-500 text-black hover:bg-amber-400"
-                  >
+                  {loginError && <p className="text-xs text-red-400 -mt-2">{loginError}</p>}
+                  <button className="flip-card__btn" type="submit" disabled={isLoading}>
                     {isLoading ? 'Entrando...' : 'Entrar'}
-                  </Button>
-                  <p className="text-center text-xs text-zinc-500">
-                    <a href="/agendar" className="text-amber-400 hover:underline">
-                      Quero agendar sem cadastro
-                    </a>
-                  </p>
+                  </button>
+                  <a href="/agendar" className="text-xs text-zinc-500 hover:text-amber-400 transition-colors">
+                    Agendar sem cadastro
+                  </a>
                 </form>
-              </TabsContent>
-
-              <TabsContent value="register">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div>
-                    <Label htmlFor="reg-name" className="text-zinc-300">
-                      Nome
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                      <Input
-                        id="reg-name"
-                        placeholder="Seu nome completo"
-                        value={regName}
-                        onChange={(e) => setRegName(e.target.value)}
-                        className="border-zinc-800 bg-zinc-900 pl-9 text-zinc-300 placeholder:text-zinc-600"
-                        required
-                      />
-                    </div>
+              </div>
+              <div className="flip-card__back">
+                <div className="title">Cadastrar</div>
+                <form className="flip-card__form" onSubmit={handleRegister}>
+                  <div className="input-wrapper">
+                    <User className="input-icon" />
+                    <input
+                      className="flip-card__input"
+                      placeholder="Nome completo"
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      required
+                    />
                   </div>
-                  <div>
-                    <Label htmlFor="reg-email" className="text-zinc-300">
-                      Email
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                      <Input
-                        id="reg-email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        value={regEmail}
-                        onChange={(e) => setRegEmail(e.target.value)}
-                        className="border-zinc-800 bg-zinc-900 pl-9 text-zinc-300 placeholder:text-zinc-600"
-                        required
-                      />
-                    </div>
+                  <div className="input-wrapper">
+                    <Mail className="input-icon" />
+                    <input
+                      className="flip-card__input"
+                      type="email"
+                      placeholder="Email"
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      required
+                    />
                   </div>
-                  <div>
-                    <Label htmlFor="reg-phone" className="text-zinc-300">
-                      Telefone
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                      <Input
-                        id="reg-phone"
-                        placeholder="(11) 99999-8888"
-                        value={regPhone}
-                        onChange={(e) => setRegPhone(e.target.value)}
-                        className="border-zinc-800 bg-zinc-900 pl-9 text-zinc-300 placeholder:text-zinc-600"
-                        required
-                      />
-                    </div>
+                  <div className="input-wrapper">
+                    <Phone className="input-icon" />
+                    <input
+                      className="flip-card__input"
+                      placeholder="Telefone"
+                      value={regPhone}
+                      onChange={(e) => setRegPhone(formatPhone(e.target.value))}
+                    />
                   </div>
-                  <div>
-                    <Label htmlFor="reg-password" className="text-zinc-300">
-                      Senha
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                      <Input
-                        id="reg-password"
-                        type="password"
-                        placeholder="Crie uma senha"
-                        value={regPassword}
-                        onChange={(e) => setRegPassword(e.target.value)}
-                        className="border-zinc-800 bg-zinc-900 pl-9 text-zinc-300 placeholder:text-zinc-600"
-                        required
-                      />
-                    </div>
+                  <div className="input-wrapper">
+                    <Lock className="input-icon" />
+                    <input
+                      className="flip-card__input"
+                      type="password"
+                      placeholder="Senha"
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      required
+                    />
                   </div>
-                  {regError && (
-                    <p className="text-sm text-red-400">{regError}</p>
-                  )}
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-amber-500 text-black hover:bg-amber-400"
-                  >
+                  {regError && <p className="text-xs text-red-400 -mt-2">{regError}</p>}
+                  <button className="flip-card__btn" type="submit" disabled={isLoading}>
                     {isLoading ? 'Cadastrando...' : 'Cadastrar'}
-                  </Button>
+                  </button>
                 </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <p className="text-xs text-zinc-600">
+          Já tem barbearia?{' '}
+          <a href="/cadastrar" className="text-amber-400 hover:text-amber-300 transition-colors">
+            Criar conta para barbearia
+          </a>
+        </p>
       </div>
+
+      <style>{`
+        .card-switch {
+          perspective: 1000px;
+        }
+
+        .switch {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: 50px;
+          height: 20px;
+        }
+
+        .card-side::before {
+          position: absolute;
+          content: 'Entrar';
+          left: -80px;
+          top: -2px;
+          width: 100px;
+          text-decoration: underline;
+          color: #f59e0b;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .card-side::after {
+          position: absolute;
+          content: 'Cadastrar';
+          left: 70px;
+          top: -2px;
+          width: 100px;
+          text-decoration: none;
+          color: #a1a1aa;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .toggle:checked ~ .card-side::before {
+          text-decoration: none;
+          color: #a1a1aa;
+        }
+
+        .toggle:checked ~ .card-side::after {
+          text-decoration: underline;
+          color: #f59e0b;
+        }
+
+        .toggle {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          box-sizing: border-box;
+          border-radius: 5px;
+          border: 2px solid #27272a;
+          box-shadow: 3px 3px 0px #27272a;
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #18181b;
+          transition: 0.3s;
+        }
+
+        .slider:before {
+          box-sizing: border-box;
+          position: absolute;
+          content: '';
+          height: 18px;
+          width: 18px;
+          border: 2px solid #27272a;
+          border-radius: 3px;
+          left: -1px;
+          bottom: 1px;
+          background-color: #f59e0b;
+          box-shadow: 0 2px 0 #27272a;
+          transition: 0.3s;
+        }
+
+        .toggle:checked + .slider {
+          background-color: #18181b;
+        }
+
+        .toggle:checked + .slider:before {
+          transform: translateX(28px);
+        }
+
+        .flip-card__inner {
+          width: 320px;
+          height: 400px;
+          position: relative;
+          background-color: transparent;
+          perspective: 1000px;
+          text-align: center;
+          transition: transform 0.8s;
+          transform-style: preserve-3d;
+        }
+
+        .toggle:checked ~ .flip-card__inner {
+          transform: rotateY(180deg);
+        }
+
+        .flip-card__front, .flip-card__back {
+          padding: 24px;
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          background: #09090b;
+          gap: 16px;
+          border-radius: 12px;
+          border: 2px solid #27272a;
+          box-shadow: 6px 6px 0px #18181b;
+        }
+
+        .flip-card__back {
+          transform: rotateY(180deg);
+        }
+
+        .flip-card__form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .title {
+          font-size: 22px;
+          font-weight: 900;
+          text-align: center;
+          color: #f4f4f5;
+        }
+
+        .input-wrapper {
+          position: relative;
+          width: 100%;
+        }
+
+        .input-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 16px;
+          height: 16px;
+          color: #52525b;
+          pointer-events: none;
+        }
+
+        .flip-card__input {
+          width: 100%;
+          height: 42px;
+          border-radius: 8px;
+          border: 2px solid #27272a;
+          background-color: #09090b;
+          box-shadow: 3px 3px 0px #18181b;
+          font-size: 14px;
+          font-weight: 500;
+          color: #f4f4f5;
+          padding: 5px 10px 5px 38px;
+          outline: none;
+          box-sizing: border-box;
+          transition: border-color 0.2s;
+        }
+
+        .flip-card__input::placeholder {
+          color: #52525b;
+          opacity: 0.8;
+        }
+
+        .flip-card__input:focus {
+          border-color: #f59e0b;
+        }
+
+        .flip-card__btn {
+          width: 140px;
+          height: 42px;
+          border-radius: 8px;
+          border: 2px solid #f59e0b;
+          background-color: #f59e0b;
+          box-shadow: 4px 4px 0px #78350f;
+          font-size: 15px;
+          font-weight: 700;
+          color: #09090b;
+          cursor: pointer;
+          transition: all 0.1s;
+        }
+
+        .flip-card__btn:active {
+          box-shadow: 0px 0px 0px #78350f;
+          transform: translate(3px, 3px);
+        }
+
+        .flip-card__btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      `}</style>
     </div>
   )
 }
