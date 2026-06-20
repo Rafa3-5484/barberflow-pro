@@ -172,12 +172,11 @@ export default function LoginPage() {
         }
         .flip-card__front,
         .flip-card__back {
-          padding: 28px;
+          padding: 32px 28px 28px;
           position: absolute;
           inset: 0;
           display: flex;
           flex-direction: column;
-          justify-content: center;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
           background: #09090b;
@@ -199,7 +198,7 @@ export default function LoginPage() {
           font-weight: 800;
           text-align: center;
           color: #f4f4f5;
-          margin-bottom: 4px;
+          margin-bottom: 20px;
         }
         .input-wrapper {
           position: relative;
