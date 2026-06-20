@@ -3,10 +3,11 @@
 import { useState, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Menu, X, Sun, Moon, Scissors, Calendar } from 'lucide-react'
+import { Menu, X, Sun, Moon, Scissors, Calendar, LayoutDashboard } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'
+import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
@@ -20,6 +21,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const { user, isAuthenticated, isLoading } = useAuth()
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname === '/') {
@@ -70,17 +72,27 @@ export function Navbar() {
             <span className="sr-only">Alternar tema</span>
           </Button>
 
-          <a href="/cadastrar">
-            <Button className="hidden md:inline-flex gap-2 bg-amber-500 text-black hover:bg-amber-400">
-              Começar Agora
-            </Button>
-          </a>
-
-          <a href="/login">
-            <Button variant="outline" className="hidden border-zinc-700 text-zinc-300 hover:text-white md:inline-flex">
-              Login
-            </Button>
-          </a>
+          {isAuthenticated && user ? (
+            <Link href="/dashboard">
+              <Button className="hidden md:inline-flex gap-2 bg-amber-500 text-black hover:bg-amber-400">
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <a href="/cadastrar">
+                <Button className="hidden md:inline-flex gap-2 bg-amber-500 text-black hover:bg-amber-400">
+                  Começar Agora
+                </Button>
+              </a>
+              <a href="/login">
+                <Button variant="outline" className="hidden border-zinc-700 text-zinc-300 hover:text-white md:inline-flex">
+                  Login
+                </Button>
+              </a>
+            </>
+          )}
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger className="md:hidden">
@@ -111,16 +123,29 @@ export function Navbar() {
                   ))}
                 </nav>
                 <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-zinc-800">
-                  <a href="/cadastrar">
-                    <Button className="w-full gap-2 bg-amber-500 text-black hover:bg-amber-400">
-                      Começar Agora
-                    </Button>
-                  </a>
-                  <a href="/login">
-                    <Button variant="outline" className="w-full border-zinc-700 text-zinc-300">
-                      Login
-                    </Button>
-                  </a>
+                  {isAuthenticated && user ? (
+                    <SheetClose>
+                      <Link href="/dashboard">
+                        <Button className="w-full gap-2 bg-amber-500 text-black hover:bg-amber-400">
+                          <LayoutDashboard className="h-4 w-4" />
+                          Dashboard
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                  ) : (
+                    <>
+                      <a href="/cadastrar">
+                        <Button className="w-full gap-2 bg-amber-500 text-black hover:bg-amber-400">
+                          Começar Agora
+                        </Button>
+                      </a>
+                      <a href="/login">
+                        <Button variant="outline" className="w-full border-zinc-700 text-zinc-300">
+                          Login
+                        </Button>
+                      </a>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
