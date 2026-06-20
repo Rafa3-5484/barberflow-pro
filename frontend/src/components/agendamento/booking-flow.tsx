@@ -124,7 +124,7 @@ function EmptyState({
 function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
     <div className="mb-10">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start">
         {steps.map((step, index) => {
           const StepIcon = step.icon
           const isCompleted = currentStep > step.id
@@ -132,6 +132,11 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
           return (
             <div key={step.id} className="flex flex-1 flex-col items-center">
               <div className="flex w-full items-center">
+                {index > 0 ? (
+                  <div className={cn('h-[2px] flex-1 rounded-full transition-colors', isCompleted ? 'bg-amber-500' : 'bg-zinc-800')} />
+                ) : (
+                  <div className="flex-1" />
+                )}
                 <motion.div
                   layout
                   className={cn(
@@ -155,21 +160,15 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                     <StepIcon className="h-4 w-4" />
                   )}
                 </motion.div>
-                {index < steps.length - 1 && (
-                  <div className="flex-1 px-1">
-                    <motion.div
-                      className={cn(
-                        'h-[2px] rounded-full',
-                        isCompleted ? 'bg-amber-500' : 'bg-zinc-800'
-                      )}
-                      layout
-                    />
-                  </div>
+                {index < steps.length - 1 ? (
+                  <div className={cn('h-[2px] flex-1 rounded-full transition-colors', isCompleted ? 'bg-amber-500' : 'bg-zinc-800')} />
+                ) : (
+                  <div className="flex-1" />
                 )}
               </div>
               <span
                 className={cn(
-                  'mt-2 text-xs font-medium transition-colors',
+                  'mt-2 text-center text-xs font-medium transition-colors',
                   isCurrent
                     ? 'text-amber-400'
                     : isCompleted
