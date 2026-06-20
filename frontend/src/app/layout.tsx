@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "BarberFlow Pro - Sistema de Gestão para Barbearias",
   description:
     "Sistema completo de gestão para barbearias. Agende horários, gerencie profissionais, controle o caixa e impulsione seus resultados.",
+  icons: {
+    icon: [{ url: "/favicon.png", sizes: "32x32", type: "image/png" }],
+    apple: [{ url: "/favicon.png", sizes: "180x180" }],
+  },
 };
 
 export default function RootLayout({
