@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.next/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+coverage/
+.turbo/
+*.tsbuildinfo
+.next/
+out/
+
+# Prisma
+apps/api/prisma/migrations/
+
+# Uploads
+apps/api/uploads/
+apps/web/public/uploads/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
